@@ -9,12 +9,14 @@ int addCity(char cities[MAX_CITIES][MAX_CITY_LENGTH],int currentCityCount);
 void renameCity(char cities[MAX_CITIES][MAX_CITY_LENGTH],int currentCityCount);
 int removeCity(char cities[MAX_CITIES][MAX_CITY_LENGTH], int cityCount);
 
+
 int main()
 
 {
     char cities[MAX_CITIES][MAX_CITY_LENGTH];
     int currentCityCount=0;
     int choice;
+
     do
     {
         printf("\n===City Management===\n");
@@ -22,7 +24,8 @@ int main()
         printf("2.Rename City\n");
         printf("3.Remove City\n");
         printf("4.Show Cities\n");
-        printf("5.Exit\n");
+        printf("5.Input or Edit Distances\n");
+        printf("6.Exit\n");
         printf("Enter choice:");
         scanf("%d",&choice);
         switch(choice)
@@ -42,8 +45,7 @@ int main()
                 printf("%d.%s\n",i+1,cities[i]);
             }
             break;
-
-        case 5:
+            case 5:
             return 0;
             break;
         default:
@@ -111,10 +113,6 @@ int removeCity(char cities[MAX_CITIES][MAX_CITY_LENGTH], int currentCityCount)
     }
     return currentCityCount - 1;
 }
-
-
-
-
 
 
 

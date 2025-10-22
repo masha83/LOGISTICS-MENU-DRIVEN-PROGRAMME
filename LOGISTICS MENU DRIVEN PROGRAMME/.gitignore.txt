@@ -1,0 +1,13 @@
+# Ignore compiled files
+*.exe
+*.o
+*.depend
+*.layout
+*.obj
+*.dll
+*.pdb
+
+# Ignore build folders
+bin/
+Debug/
+Release/
