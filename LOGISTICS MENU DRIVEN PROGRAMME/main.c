@@ -8,6 +8,9 @@
 int addCity(char cities[MAX_CITIES][MAX_CITY_LENGTH],int currentCityCount);
 void renameCity(char cities[MAX_CITIES][MAX_CITY_LENGTH],int currentCityCount);
 int removeCity(char cities[MAX_CITIES][MAX_CITY_LENGTH], int cityCount);
+void inputDistance(int distance[MAX_CITIES][MAX_CITIES],char cities[MAX_CITIES][MAX_CITY_LENGTH],int currentCityCount);
+
+
 
 
 int main()
@@ -16,6 +19,8 @@ int main()
     char cities[MAX_CITIES][MAX_CITY_LENGTH];
     int currentCityCount=0;
     int choice;
+    int distance[MAX_CITIES][MAX_CITIES] = {0};
+
 
     do
     {
@@ -45,7 +50,11 @@ int main()
                 printf("%d.%s\n",i+1,cities[i]);
             }
             break;
-            case 5:
+        case 5:
+            inputDistance(distance,cities,currentCityCount);
+            break;
+
+        case 6:
             return 0;
             break;
         default:
@@ -56,10 +65,11 @@ int main()
 
 
     }
-    while(choice!=5);
+    while(choice!=6);
 
     return 0;
 }
+
 
 int addCity(char cities[MAX_CITIES][MAX_CITY_LENGTH],int currentCityCount)
 {
@@ -113,6 +123,43 @@ int removeCity(char cities[MAX_CITIES][MAX_CITY_LENGTH], int currentCityCount)
     }
     return currentCityCount - 1;
 }
+
+void inputDistance(int distances[MAX_CITIES][MAX_CITIES],char cities[MAX_CITIES][MAX_CITY_LENGTH],int currentCityCount)
+{
+
+    int city1,city2;
+    int dist;
+    printf("Show cities:\n");
+    for(int i=0; i<currentCityCount; i++)
+    {
+        printf("%d.%s\n",i+1,cities[i]);
+    }
+    printf("Enter first city number:");
+    scanf("%d",&city1);
+    printf("Enter second city number:");
+    scanf("%d",&city2);
+
+    if(city1<1||city1>currentCityCount||city2<1||city2>currentCityCount)
+    {
+        printf("Invalid city numbers!\n");
+        return;
+    }
+
+    if(city1==city2)
+    {
+        printf("Distance between same city is always 0\n");
+        return;
+    }
+
+    printf("Enter distance between %s and %s(km):",cities[city1-1],cities[city2-1]);
+    scanf("%d",&dist);
+
+    distances[city1-1][city2-1]=dist;
+    distances[city2-1][city1-1]=dist;
+    printf("Input the distances successfully");
+}
+
+
 
 
 
