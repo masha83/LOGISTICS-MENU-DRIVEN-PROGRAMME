@@ -4,6 +4,15 @@
 
 #define MAX_CITIES 30
 #define MAX_CITY_LENGTH 50
+#define MAX_DELIVERIES 100
+#define FUEL_PRICE 450.0
+
+typedef struct {
+    int source;
+    int destination;
+    int vehicleType;
+    float weight;
+} Delivery;
 
 void manageCities(char cities[MAX_CITIES][MAX_CITY_LENGTH], int*currentCityCount);
 int addCity(char cities[MAX_CITIES][MAX_CITY_LENGTH],int currentCityCount);
@@ -14,9 +23,9 @@ void inputDistances(int distance[MAX_CITIES][MAX_CITIES],char cities[MAX_CITIES]
 void displayDistances(int distance[MAX_CITIES][MAX_CITIES],char cities[MAX_CITIES][MAX_CITY_LENGTH],int currentCityCount);
 void manageVehicles(char vehicleType[3][20], int capacity[3], float ratePerKm[3], float avgSpeed[3], float fuelEfficiency[3]);
 void displayVehicles(char vehicleType[3][20], int capacity[3], float ratePerKm[3], float avgSpeed[3], float fuelEfficiency[3]);
-
-
-
+void handleDeliveries(Delivery deliveries[], int *deliveryCount, int currentCityCount,int capacity[], char cities[][50], char vehicleType[][20],int distances[][MAX_CITIES], float ratePerKm[], float avgSpeed[], float fuelEfficiency[]);
+void createDelivery(Delivery deliveries[],int *deliveryCount,int currentCityCount,int capacity[],char cities[][50],char vehicleType[][20],int distances[][MAX_CITIES],float ratePerKm[],float avgSpeed[],float fuelEfficiency[]);
+void displayDeliveries(Delivery deliveries[], int deliveryCount, char cities[][50], char vehicleType[][20]);
 
 
 
@@ -35,9 +44,11 @@ int main()
     float ratePerKm[3]= {30.0,40.0,80.0};
     float avgSpeed[3]= {60.0,50.0,45.0};
     float fuelEfficiency[3]= {12.0,6.0,4.0};
+    Delivery deliveries[MAX_DELIVERIES];
+    int deliveryCount = 0;
 
 
-    do
+do
     {
         printf("\n=========================================\n");
         printf("LOGISTICS MANAGEMENT SYSTEM\n");
@@ -45,7 +56,8 @@ int main()
         printf("1.City Management\n");
         printf("2.Distance Management\n");
         printf("3.Vehicle Management\n");
-        printf("4.Exit\n");
+        printf("4.Delivery Request Handling\n");
+        printf("5.Exit\n");
         printf("Enter choice:");
         scanf("%d",&choice);
         switch(choice)
@@ -59,7 +71,10 @@ int main()
         case 3:
             manageVehicles(vehicleType,capacity,ratePerKm,avgSpeed,fuelEfficiency);
             break;
-        case 4:
+            case 4:
+            handleDeliveries(deliveries,&deliveryCount,currentCityCount,capacity,cities,vehicleType,distance,ratePerKm,avgSpeed,fuelEfficiency);
+break;
+        case 5:
             printf("Exiting program...\n");
             break;
             return 0;
@@ -72,7 +87,7 @@ int main()
 
 
     }
-    while(choice!=4);
+    while(choice!=5);
 
     return 0;
 }
@@ -285,11 +300,101 @@ void manageVehicles(char vehicleType[3][20],int capacity[3], float ratePerKm[3],
 }
 
 void displayVehicles(char vehicleType[3][20], int capacity[3], float ratePerKm[3], float avgSpeed[3], float fuelEfficiency[3])
-
 {
     printf("\n---Vehicle Types---\nType\tCapacity(kg)\tRate/km(LKR)\tSpeed(km/h)\tFuelEff(km/l)\n");
     for(int i = 0; i < 3; i++)
         printf("%d.%s\t\t%d\t\t%.2f\t\t%.2f\t\t%.2f\n",i+1,vehicleType[i],capacity[i],ratePerKm[i],avgSpeed[i],fuelEfficiency[i]);
+}
+void handleDeliveries(Delivery deliveries[], int *deliveryCount, int currentCityCount,
+                      int capacity[], char cities[][50], char vehicleType[][20],
+                      int distances[][MAX_CITIES], float ratePerKm[], float avgSpeed[], float fuelEfficiency[]) {
+    int choice;
+
+    do {
+        printf("\n--- Delivery Request Handling ---\n");
+        printf("1. Create New Delivery Request\n");
+        printf("2. View All Deliveries\n");
+        printf("3. Back to Main Menu\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+        switch(choice) {
+            case 1:
+                createDelivery(deliveries, deliveryCount, currentCityCount, capacity, cities, vehicleType, distances, ratePerKm, avgSpeed, fuelEfficiency);
+              break;
+            case 2:
+                displayDeliveries(deliveries,*deliveryCount,cities,vehicleType);
+            break;
+            case 3:
+                printf("Returning to main");
+                break;
+            default: printf("Invalid choice.\n");
+        }
+    } while(choice != 3);
+}
+
+void createDelivery(Delivery deliveries[], int *deliveryCount, int currentCityCount, int capacity[], char cities[][50], char vehicleType[][20], int distances[][MAX_CITIES], float ratePerKm[], float avgSpeed[], float fuelEfficiency[]){
+    if(currentCityCount<2){
+        printf("Please add at least two cities first.\n");
+        return;
+    }
+    if(*deliveryCount>=MAX_DELIVERIES){
+        printf("Delivery record limit reached.\n");
+        return;
+    }
+
+    int s,d;
+    printf("Enter source city number: ");
+    scanf("%d",&s);
+    printf("Enter destination city number: ");
+    scanf("%d",&d);
+    if(s==d) {
+        printf("Source and destination cannot be the same.\n");
+        return;
+    }
+
+
+    if(s < 1 || s > currentCityCount|| d < 1 || d > currentCityCount) {
+        printf("Invalid city numbers.\n");
+        return;
+    }
+
+    displayVehicles(vehicleType,capacity,ratePerKm,avgSpeed,fuelEfficiency);
+    int v;
+    printf("Select vehicle type: ");
+    scanf("%d", &v);
+    if(v < 1 || v > 3) {
+        printf("Invalid vehicle type.\n");
+        return;
+    }
+
+    float weight;
+    printf("Enter weight (kg): ");
+    scanf("%f", &weight);
+    if(weight > capacity[v-1]) {
+        printf("Weight exceeds vehicle capacity of %d kg.\n", capacity[v-1]);
+        return;
+    }
+
+    deliveries[*deliveryCount].source = s - 1;
+    deliveries[*deliveryCount].destination = d - 1;
+    deliveries[*deliveryCount].vehicleType = v - 1;
+    deliveries[*deliveryCount].weight = weight;
+    (*deliveryCount)++;
+
+    printf("\nDelivery order added successfully!\n");
+
+}
+
+void displayDeliveries(Delivery deliveries[], int deliveryCount, char cities[][50], char vehicleType[][20]){
+    if(deliveryCount == 0) {
+        printf("No deliveries yet.\n");
+        return;
+    }
+    printf("\n--- Delivery Records ---\n");
+    for(int i = 0; i < deliveryCount; i++) {
+        printf("%d. From %s to %s | Vehicle: %s | Weight: %.2f kg\n",
+               i + 1, cities[deliveries[i].source], cities[deliveries[i].destination],vehicleType[deliveries[i].vehicleType], deliveries[i].weight);
+    }
 }
 
 
