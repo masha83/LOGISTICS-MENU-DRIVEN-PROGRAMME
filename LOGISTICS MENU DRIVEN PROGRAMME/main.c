@@ -41,8 +41,15 @@ void calculateDeliveryCost(Delivery d, int distances[][MAX_CITIES], char cities[
 
 
 
-
+int main()
 {
+
+
+
+
+
+
+
 
     char cities[MAX_CITIES][MAX_CITY_LENGTH];
     int currentCityCount=0;
