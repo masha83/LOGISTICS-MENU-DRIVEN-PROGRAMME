@@ -15,6 +15,14 @@ typedef struct
     float weight;
 } Delivery;
 
+typedef struct {
+    char name[20];
+    int capacity;
+    float ratePerKm;
+    float avgSpeed;
+    float fuelEfficiency;
+} Vehicle;
+
 void manageCities(char cities[MAX_CITIES][MAX_CITY_LENGTH], int*currentCityCount);
 int addCity(char cities[MAX_CITIES][MAX_CITY_LENGTH],int currentCityCount);
 void renameCity(char cities[MAX_CITIES][MAX_CITY_LENGTH],int currentCityCount);
@@ -442,6 +450,25 @@ void calculateDeliveryCost(Delivery d, int distances[][MAX_CITIES], char cities[
     printf("Customer Charge: %.2f LKR\n", customerCharge);
     printf("==================================\n");
 }
+
+void showDeliveries(Delivery deliveries[], Vehicle vehicles[], char vehicleType[][20], char cities[][50], int currentCityCount, int deliveryCount) {
+    if (currentCityCount == 0) {
+        printf("No deliveries made yet.\n");
+        return;
+    }
+
+    for (int i = 0; i < deliveryCount; i++) {
+        Delivery d = deliveries[i];
+        Vehicle v = vehicles[d.vehicleType];
+
+        printf("\nDelivery %d:\n", i + 1);
+        printf("From %s to %s\n", cities[d.source], cities[d.destination]);
+        printf("Vehicle: %s, Weight: %.2f kg\n", v.name, d.weight);
+        printf("Distance: %.2lf km, Customer Charge: %.2lf LKR\n", d.distances, d.customerCharge);
+        printf("Estimated Time: %.2lf hours\n", d.estimatedTime);
+    }
+}
+
 
 
 
