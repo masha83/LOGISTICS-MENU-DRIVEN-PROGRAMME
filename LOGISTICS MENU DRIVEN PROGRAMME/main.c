@@ -451,7 +451,7 @@ void calculateDeliveryCost(Delivery d, int distances[][MAX_CITIES], char cities[
     printf("==================================\n");
 }
 
-void generateReports() {
+void generateReports(int deliveryCount, Delivery deliveries[], int distances[][MAX_CITIES], float ratePerKm[], float avgSpeed[], float fuelEfficiency[],char* cities[]) {
     if(deliveryCount == 0) {
         printf("\nNo deliveries completed yet.\n");
         return;
@@ -500,54 +500,6 @@ void generateReports() {
     printf("================================\n");
 }
 
-void generateReports() {
-    if(deliveryCount == 0) {
-        printf("\nNo deliveries completed yet.\n");
-        return;
-    }
-
-    int totalDistance = 0;
-    float totalTime = 0.0;
-    float totalRevenue = 0.0;
-    float totalProfit = 0.0;
-    int maxDistance = 0, minDistance = distances[deliveries[0].source][deliveries[0].destination];
-    int maxIndex = 0, minIndex = 0;
-
-    for(int i = 0; i < deliveryCount; i++) {
-        int D = distances[deliveries[i].source][deliveries[i].destination];
-        float W = deliveries[i].weight;
-        int T = deliveries[i].vehicleType;
-        float R = ratePerKm[T];
-        float S = avgSpeed[T];
-
-        float deliveryCost = D * R * (1 + W / 10000.0);
-        float fuelCost = (D / fuelEfficiency[T]) * FUEL_PRICE;
-        float operationalCost = deliveryCost + fuelCost;
-        float profit = deliveryCost * 0.25;
-        float customerCharge = operationalCost + profit;
-        float estimatedTime = D / S;
-
-        totalDistance += D;
-        totalTime += estimatedTime;
-        totalRevenue += customerCharge;
-        totalProfit += profit;
-
-        if(D > maxDistance) { maxDistance = D; maxIndex = i; }
-        if(D < minDistance) { minDistance = D; minIndex = i; }
-    }
-
-    printf("\n===== PERFORMANCE REPORT =====\n");
-    printf("Total Deliveries Completed: %d\n", deliveryCount);
-    printf("Total Distance Covered: %d km\n", totalDistance);
-    printf("Average Delivery Time: %.2f hours\n", totalTime / deliveryCount);
-    printf("Total Revenue: %.2f LKR\n", totalRevenue);
-    printf("Total Profit: %.2f LKR\n", totalProfit);
-    printf("Longest Route: From %s to %s | %d km\n",
-           cities[deliveries[maxIndex].source], cities[deliveries[maxIndex].destination], maxDistance);
-    printf("Shortest Route: From %s to %s | %d km\n",
-           cities[deliveries[minIndex].source], cities[deliveries[minIndex].destination], minDistance);
-    printf("================================\n");
-}
 
 
 
