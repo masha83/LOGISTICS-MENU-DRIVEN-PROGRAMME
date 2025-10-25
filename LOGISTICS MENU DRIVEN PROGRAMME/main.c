@@ -7,7 +7,8 @@
 #define MAX_DELIVERIES 100
 #define FUEL_PRICE 450.0
 
-typedef struct {
+typedef struct
+{
     int source;
     int destination;
     int vehicleType;
@@ -26,7 +27,7 @@ void displayVehicles(char vehicleType[3][20], int capacity[3], float ratePerKm[3
 void handleDeliveries(Delivery deliveries[], int *deliveryCount, int currentCityCount,int capacity[], char cities[][50], char vehicleType[][20],int distances[][MAX_CITIES], float ratePerKm[], float avgSpeed[], float fuelEfficiency[]);
 void createDelivery(Delivery deliveries[],int *deliveryCount,int currentCityCount,int capacity[],char cities[][50],char vehicleType[][20],int distances[][MAX_CITIES],float ratePerKm[],float avgSpeed[],float fuelEfficiency[]);
 void displayDeliveries(Delivery deliveries[], int deliveryCount, char cities[][50], char vehicleType[][20]);
-
+void calculateDeliveryCost(Delivery d, int distances[][MAX_CITIES], char cities[][MAX_CITY_LENGTH], char vehicleType[][20], float ratePerKm[], float avgSpeed[], float fuelEfficiency[]);
 
 
 
@@ -48,7 +49,7 @@ int main()
     int deliveryCount = 0;
 
 
-do
+    do
     {
         printf("\n=========================================\n");
         printf("LOGISTICS MANAGEMENT SYSTEM\n");
@@ -71,9 +72,9 @@ do
         case 3:
             manageVehicles(vehicleType,capacity,ratePerKm,avgSpeed,fuelEfficiency);
             break;
-            case 4:
+        case 4:
             handleDeliveries(deliveries,&deliveryCount,currentCityCount,capacity,cities,vehicleType,distance,ratePerKm,avgSpeed,fuelEfficiency);
-break;
+            break;
         case 5:
             printf("Exiting program...\n");
             break;
@@ -307,37 +308,45 @@ void displayVehicles(char vehicleType[3][20], int capacity[3], float ratePerKm[3
 }
 void handleDeliveries(Delivery deliveries[], int *deliveryCount, int currentCityCount,
                       int capacity[], char cities[][50], char vehicleType[][20],
-                      int distances[][MAX_CITIES], float ratePerKm[], float avgSpeed[], float fuelEfficiency[]) {
+                      int distances[][MAX_CITIES], float ratePerKm[], float avgSpeed[], float fuelEfficiency[])
+{
     int choice;
 
-    do {
+    do
+    {
         printf("\n--- Delivery Request Handling ---\n");
         printf("1. Create New Delivery Request\n");
         printf("2. View All Deliveries\n");
         printf("3. Back to Main Menu\n");
         printf("Enter choice: ");
         scanf("%d", &choice);
-        switch(choice) {
-            case 1:
-                createDelivery(deliveries, deliveryCount, currentCityCount, capacity, cities, vehicleType, distances, ratePerKm, avgSpeed, fuelEfficiency);
-              break;
-            case 2:
-                displayDeliveries(deliveries,*deliveryCount,cities,vehicleType);
+        switch(choice)
+        {
+        case 1:
+            createDelivery(deliveries, deliveryCount, currentCityCount, capacity, cities, vehicleType, distances, ratePerKm, avgSpeed, fuelEfficiency);
             break;
-            case 3:
-                printf("Returning to main");
-                break;
-            default: printf("Invalid choice.\n");
+        case 2:
+            displayDeliveries(deliveries,*deliveryCount,cities,vehicleType);
+            break;
+        case 3:
+            printf("Returning to main");
+            break;
+        default:
+            printf("Invalid choice.\n");
         }
-    } while(choice != 3);
+    }
+    while(choice != 3);
 }
 
-void createDelivery(Delivery deliveries[], int *deliveryCount, int currentCityCount, int capacity[], char cities[][50], char vehicleType[][20], int distances[][MAX_CITIES], float ratePerKm[], float avgSpeed[], float fuelEfficiency[]){
-    if(currentCityCount<2){
+void createDelivery(Delivery deliveries[], int *deliveryCount, int currentCityCount, int capacity[], char cities[][50], char vehicleType[][20], int distances[][MAX_CITIES], float ratePerKm[], float avgSpeed[], float fuelEfficiency[])
+{
+    if(currentCityCount<2)
+    {
         printf("Please add at least two cities first.\n");
         return;
     }
-    if(*deliveryCount>=MAX_DELIVERIES){
+    if(*deliveryCount>=MAX_DELIVERIES)
+    {
         printf("Delivery record limit reached.\n");
         return;
     }
@@ -347,13 +356,15 @@ void createDelivery(Delivery deliveries[], int *deliveryCount, int currentCityCo
     scanf("%d",&s);
     printf("Enter destination city number: ");
     scanf("%d",&d);
-    if(s==d) {
+    if(s==d)
+    {
         printf("Source and destination cannot be the same.\n");
         return;
     }
 
 
-    if(s < 1 || s > currentCityCount|| d < 1 || d > currentCityCount) {
+    if(s < 1 || s > currentCityCount|| d < 1 || d > currentCityCount)
+    {
         printf("Invalid city numbers.\n");
         return;
     }
@@ -362,7 +373,8 @@ void createDelivery(Delivery deliveries[], int *deliveryCount, int currentCityCo
     int v;
     printf("Select vehicle type: ");
     scanf("%d", &v);
-    if(v < 1 || v > 3) {
+    if(v < 1 || v > 3)
+    {
         printf("Invalid vehicle type.\n");
         return;
     }
@@ -370,7 +382,8 @@ void createDelivery(Delivery deliveries[], int *deliveryCount, int currentCityCo
     float weight;
     printf("Enter weight (kg): ");
     scanf("%f", &weight);
-    if(weight > capacity[v-1]) {
+    if(weight > capacity[v-1])
+    {
         printf("Weight exceeds vehicle capacity of %d kg.\n", capacity[v-1]);
         return;
     }
@@ -383,20 +396,52 @@ void createDelivery(Delivery deliveries[], int *deliveryCount, int currentCityCo
 
     printf("\nDelivery order added successfully!\n");
 
+    calculateDeliveryCost(deliveries[*deliveryCount-1], distances, cities, vehicleType, ratePerKm, avgSpeed, fuelEfficiency);
 }
 
-void displayDeliveries(Delivery deliveries[], int deliveryCount, char cities[][50], char vehicleType[][20]){
-    if(deliveryCount == 0) {
+void displayDeliveries(Delivery deliveries[], int deliveryCount, char cities[][50], char vehicleType[][20])
+{
+    if(deliveryCount == 0)
+    {
         printf("No deliveries yet.\n");
         return;
     }
     printf("\n--- Delivery Records ---\n");
-    for(int i = 0; i < deliveryCount; i++) {
+    for(int i = 0; i < deliveryCount; i++)
+    {
         printf("%d. From %s to %s | Vehicle: %s | Weight: %.2f kg\n",
                i + 1, cities[deliveries[i].source], cities[deliveries[i].destination],vehicleType[deliveries[i].vehicleType], deliveries[i].weight);
     }
 }
 
+void calculateDeliveryCost(Delivery d, int distances[][MAX_CITIES], char cities[][MAX_CITY_LENGTH], char vehicleType[][20], float ratePerKm[], float avgSpeed[], float fuelEfficiency[]){
+    int D = distances[d.source][d.destination];
+    float W = d.weight;
+    int T = d.vehicleType;
+    float R = ratePerKm[T];
+    float S = avgSpeed[T];
+    float E = fuelEfficiency[T];
+
+    float deliveryCost = D * R * (1 + W / 10000.0);
+    float estimatedTime = D / S;
+    float fuelUsed = D / E;
+    float fuelCost = fuelUsed * FUEL_PRICE;
+    float operationalCost = deliveryCost + fuelCost;
+    float profit = deliveryCost * 0.25;
+    float customerCharge = operationalCost + profit;
+
+    printf("\n===== DELIVERY COST ESTIMATION =====\n");
+    printf("From: %s\nTo: %s\nDistance: %d km\nVehicle: %s\nWeight: %.2f kg\n",cities[d.source], cities[d.destination], D, vehicleType[T], W);
+    printf("----------------------------------\n");
+    printf("Delivery Cost: %.2f LKR\n", deliveryCost);
+    printf("Estimated Time: %.2f hours\n", estimatedTime);
+    printf("Fuel Used: %.2f liters\n", fuelUsed);
+    printf("Fuel Cost: %.2f LKR\n", fuelCost);
+    printf("Operational Cost: %.2f LKR\n", operationalCost);
+    printf("Profit: %.2f LKR\n", profit);
+    printf("Customer Charge: %.2f LKR\n", customerCharge);
+    printf("==================================\n");
+}
 
 
 
