@@ -15,7 +15,8 @@ typedef struct
     float weight;
 } Delivery;
 
-typedef struct {
+typedef struct
+{
     char name[20];
     int capacity;
     float ratePerKm;
@@ -429,7 +430,8 @@ void displayDeliveries(Delivery deliveries[], int deliveryCount, char cities[][5
     }
 }
 
-void calculateDeliveryCost(Delivery d, int distances[][MAX_CITIES], char cities[][MAX_CITY_LENGTH], char vehicleType[][20], float ratePerKm[], float avgSpeed[], float fuelEfficiency[]){
+void calculateDeliveryCost(Delivery d, int distances[][MAX_CITIES], char cities[][MAX_CITY_LENGTH], char vehicleType[][20], float ratePerKm[], float avgSpeed[], float fuelEfficiency[])
+{
     int D = distances[d.source][d.destination];
     float W = d.weight;
     int T = d.vehicleType;
@@ -458,8 +460,10 @@ void calculateDeliveryCost(Delivery d, int distances[][MAX_CITIES], char cities[
     printf("==================================\n");
 }
 
-void generateReports(int deliveryCount, Delivery deliveries[], int distances[][MAX_CITIES], float ratePerKm[], float avgSpeed[], float fuelEfficiency[],char* cities[]) {
-    if(deliveryCount == 0) {
+void generateReports(int deliveryCount, Delivery deliveries[], int distances[][MAX_CITIES], float ratePerKm[], float avgSpeed[], float fuelEfficiency[],char* cities[])
+{
+    if(deliveryCount == 0)
+    {
         printf("\nNo deliveries completed yet.\n");
         return;
     }
@@ -471,7 +475,8 @@ void generateReports(int deliveryCount, Delivery deliveries[], int distances[][M
     int maxDistance = 0, minDistance = distances[deliveries[0].source][deliveries[0].destination];
     int maxIndex = 0, minIndex = 0;
 
-    for(int i = 0; i < deliveryCount; i++) {
+    for(int i = 0; i < deliveryCount; i++)
+    {
         int D = distances[deliveries[i].source][deliveries[i].destination];
         float W = deliveries[i].weight;
         int T = deliveries[i].vehicleType;
@@ -490,8 +495,16 @@ void generateReports(int deliveryCount, Delivery deliveries[], int distances[][M
         totalRevenue += customerCharge;
         totalProfit += profit;
 
-        if(D > maxDistance) { maxDistance = D; maxIndex = i; }
-        if(D < minDistance) { minDistance = D; minIndex = i; }
+        if(D > maxDistance)
+        {
+            maxDistance = D;
+            maxIndex = i;
+        }
+        if(D < minDistance)
+        {
+            minDistance = D;
+            minIndex = i;
+        }
     }
 
     printf("\n===== PERFORMANCE REPORT =====\n");
